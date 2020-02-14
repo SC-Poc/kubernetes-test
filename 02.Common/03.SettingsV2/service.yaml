@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: settingsv2
+    tier: backend
+  name: settingsv2
+  namespace: common
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: settingsv2
+  type: ClusterIP

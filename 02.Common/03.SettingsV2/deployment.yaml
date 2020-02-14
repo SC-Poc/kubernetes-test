@@ -1,0 +1,50 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    description: Settings Service
+  labels:
+    app: settingsv2
+    tier: backend
+  name: settingsv2
+  namespace: common
+spec:
+  minReadySeconds: 10
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: settingsv2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: settingsv2
+      name: settingsv2
+    spec:
+      containers:
+      - env:
+        - name: ENV_INFO
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        volumeMounts:
+        - mountPath: /app/appsettings.json
+          name: settingsv2
+          readOnly: true
+          subPath: appsettings.json
+        image: swisschains/service-settingsv2:1.0.0
+        imagePullPolicy: Always
+        name: settingsv2
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: settingsv2
+        name: settingsv2
