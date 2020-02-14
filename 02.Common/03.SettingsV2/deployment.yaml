@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    description: Settings Service
+    description: Settings Service v2
   labels:
     app: settingsv2
     tier: backend
