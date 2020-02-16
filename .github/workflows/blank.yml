@@ -6,7 +6,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: deploy to cluster
+    - name: Build and publish Serrings Server
+      uses: SC-Poc/Publish-Docker-Github-Action@master
+      with:
+        name: swisschains/settings-showroom
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        workdir: ./Settings
+        # snapshot: true # use snapshot to push an additional image, which is tagged with {YEAR}{MONTH}{DAY}{HOUR}{MINUTE}{SECOND}{first 6 digits of the git sha}
+        tag_names: true 
+    - name: Restart Settings Server
+      uses: SC-Poc/kube-restart-pods@master
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        NAMESPACE: common
+        POD: settings
+    - name: Sleep for 30 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '30s'
+    - name: Apply yaml to Kubernates
       uses: SC-Poc/kube-restart-pods@master
       env:
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
